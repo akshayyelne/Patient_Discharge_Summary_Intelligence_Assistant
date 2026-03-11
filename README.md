@@ -68,23 +68,9 @@ The project includes a **Gradio-based interactive interface** featuring:
 
 ---
 
-# 📂 Running this Project
+# 📂 Running this Project on huggingface
 
-## 1. Clone the Repository
-git clone https://github.com/YOUR_USERNAME/patient-discharge-intelligence-assistant.git
-
-## 2. Install Dependencies
-
-pip install -r requirements.txt
-
-## 3. Run the Notebook
-
-Open the notebook in:
-
-- Google Colab
-- Jupyter Notebook
-
-Upload discharge summary PDFs and run the cells.
+https://huggingface.co/spaces/akshayyelne/discharge-intelligence-assistant
 
 ---
 

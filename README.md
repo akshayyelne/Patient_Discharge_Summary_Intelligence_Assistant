@@ -1,110 +1,196 @@
+🏥 Patient Discharge Intelligence Assistant
 
----
+An AI-powered clinical document intelligence system that analyzes hospital discharge summaries and enables multi-patient comparison, risk identification, and clinical reasoning using Retrieval-Augmented Generation (RAG).
 
-# 🧠 Core AI Components
+This project demonstrates how Large Language Models + vector search can transform unstructured clinical documentation into structured insights that support hospital discharge optimisation and patient safety.
 
-## 1. Structured Clinical Extraction
+🚀 Live Application
+
+Run the application here:
+
+👉 https://huggingface.co/spaces/akshayyelne/discharge-intelligence-assistant
+
+The application allows users to:
+
+Upload discharge summary PDFs
+
+Extract structured clinical information
+
+Compare multiple patients
+
+Ask clinical reasoning questions grounded in discharge data
+
+🧠 Core AI Components
+1️⃣ Structured Clinical Extraction
 
 Discharge summaries are converted into structured JSON containing:
 
-- Patient demographics
-- Primary diagnosis
-- Secondary diagnoses
-- Procedures performed
-- Medication changes
-- Risk indicators
-- Follow-up instructions
+Patient demographics
 
-This step normalizes unstructured clinical documentation.
+Primary diagnosis
 
----
+Secondary diagnoses
 
-## 2. Retrieval Augmented Generation (RAG)
+Procedures performed
+
+Medication changes
+
+Risk indicators
+
+Follow-up instructions
+
+This step normalizes unstructured clinical documentation into machine-readable clinical data.
+
+2️⃣ Retrieval-Augmented Generation (RAG)
 
 The system uses:
 
-- SentenceTransformer embeddings
-- FAISS vector search
-- Context-aware LLM reasoning
+SentenceTransformer embeddings
 
-This enables accurate question answering grounded in discharge content.
+FAISS vector similarity search
 
----
+Context-aware LLM reasoning
 
-## 3. Multi-Patient Comparison Mode
+This architecture ensures AI responses are grounded in the discharge summaries, reducing hallucination and improving reliability.
+
+3️⃣ Multi-Patient Clinical Comparison
 
 Users can select multiple patients and compare:
 
-- Length of stay
-- Diagnoses
-- Medication changes
-- Risk indicators
-- Discharge instructions
+Length of stay
 
-The system generates insights to support **discharge process optimization**.
+Primary diagnosis
 
----
+Medication changes
 
-# 🖥 User Interface
+Risk indicators
 
-The project includes a **Gradio-based interactive interface** featuring:
+Discharge instructions
 
-- Multi-patient selector
-- AI-powered chat interface
-- Comparison mode
-- Embedded project documentation
+The system generates insights that can support discharge process optimisation and clinical risk analysis.
 
----
+📊 Clinical Comparison Dashboard
 
-# 🛠 Technology Stack
+The system automatically generates a clinical comparison dashboard showing:
 
-- Python
-- Google Colab
-- Groq LLM (`openai/gpt-oss-120b`)
-- SentenceTransformers
-- FAISS
-- Gradio
-- PyPDF
+Patient name
 
----
+Age
 
-# 📂 Running this Project on huggingface
+Diagnosis
 
-https://huggingface.co/spaces/akshayyelne/discharge-intelligence-assistant
+Length of stay
 
----
+Risk indicators
 
-# 📊 Future Enhancements
+This provides a quick overview of discharge outcomes across multiple patients.
+
+Example dashboard view:
+
+Patient	Age	Diagnosis	Length of Stay	Risk Flags
+Patient A	57	Pneumonia	5 days	AKI risk
+Patient B	62	Sepsis	7 days	ICU admission
+💬 AI Clinical Assistant
+
+Users can ask clinical questions such as:
+
+Which patient has the highest discharge risk?
+
+Compare diagnoses between selected patients
+
+Identify potential discharge complications
+
+Summarize medication changes
+
+The AI assistant answers using only the uploaded discharge summaries.
+
+🖥 User Interface
+
+The project includes an interactive Gradio interface featuring:
+
+Multi-patient document upload
+
+Patient selection
+
+Clinical comparison dashboard
+
+AI-powered chat assistant
+
+Structured clinical data extraction
+
+🛠 Technology Stack
+Component	Technology
+Language	Python
+Development	Google Colab
+LLM	Groq (openai/gpt-oss-120b)
+Embeddings	SentenceTransformers
+Vector Database	FAISS
+UI	Gradio
+PDF Processing	PyPDF
+📂 Running the Project
+Run via Hugging Face
+
+The easiest way to run the application:
+
+👉 https://huggingface.co/spaces/akshayyelne/discharge-intelligence-assistant
+
+Run Locally
+
+Clone the repository:
+
+git clone https://github.com/akshayyelne/discharge-intelligence-assistant.git
+cd discharge-intelligence-assistant
+
+Install dependencies:
+
+pip install -r requirements.txt
+
+Run the application:
+
+python app.py
+📊 Future Enhancements
 
 Potential improvements include:
 
-- Automated discharge KPI scoring
-- Risk scoring models
-- Visualization dashboards
-- EMR system integration
-- Real-time discharge monitoring
+Automated discharge KPI scoring
 
----
+Predictive readmission risk models
 
-# 📄 Documentation
+Visualization dashboards
+
+EMR system integration
+
+Real-time discharge monitoring
+
+Clinical cohort analysis
+
+📄 Documentation
 
 Detailed implementation documentation is available here:
+
 docs/Patient_Discharge_Intelligence_Assistant_Project_Documentation.pdf
+🎯 Use Case
 
+This project demonstrates how hybrid LLM + RAG architectures can convert unstructured clinical documents into actionable insights that support:
 
----
+Hospital discharge optimisation
 
-# 🎯 Use Case
+Clinical decision support
 
-This project demonstrates how hybrid **LLM + RAG architectures** can convert unstructured clinical documents into actionable insights that support hospital discharge optimization.
+Risk identification
 
----
+Operational healthcare analytics
 
-# 👨‍💻 Author
+👨‍💻 Author
 
 AI Portfolio Project exploring:
 
-- Healthcare AI
-- Retrieval Augmented Generation
-- Clinical document intelligence
+Healthcare AI
 
+Retrieval-Augmented Generation
+
+Clinical document intelligence
+
+LLM-powered healthcare analytics
+
+⭐ If you find this project interesting, consider giving the repository a star.

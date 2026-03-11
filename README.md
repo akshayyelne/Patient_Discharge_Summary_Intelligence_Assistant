@@ -1,10 +1,10 @@
-🏥 Patient Discharge Intelligence Assistant
+**🏥 Patient Discharge Intelligence Assistant**
 
 An AI-powered clinical document intelligence system that analyzes hospital discharge summaries and enables multi-patient comparison, risk identification, and clinical reasoning using Retrieval-Augmented Generation (RAG).
 
 This project demonstrates how Large Language Models + vector search can transform unstructured clinical documentation into structured insights that support hospital discharge optimisation and patient safety.
 
-🚀 Live Application
+**🚀 Live Application**
 
 Run the application here:
 
@@ -12,185 +12,172 @@ Run the application here:
 
 The application allows users to:
 
-Upload discharge summary PDFs
+   Upload discharge summary PDFs
 
-Extract structured clinical information
+   Extract structured clinical information
 
-Compare multiple patients
+  Compare multiple patients
 
-Ask clinical reasoning questions grounded in discharge data
+  Ask clinical reasoning questions grounded in discharge data
 
-🧠 Core AI Components
+
+**🧠 Core AI Components**
+
 1️⃣ Structured Clinical Extraction
 
-Discharge summaries are converted into structured JSON containing:
+   Discharge summaries are converted into structured JSON containing:
 
-Patient demographics
+   Patient demographics
 
-Primary diagnosis
+   Primary diagnosis
 
-Secondary diagnoses
+   Secondary diagnoses
 
-Procedures performed
+   Procedures performed
 
-Medication changes
+   Medication changes
 
-Risk indicators
+   Risk indicators
 
-Follow-up instructions
+   Follow-up instructions
 
-This step normalizes unstructured clinical documentation into machine-readable clinical data.
-
-2️⃣ Retrieval-Augmented Generation (RAG)
+   This step normalizes unstructured clinical documentation into machine-readable clinical data.
+**
+2️⃣ Retrieval-Augmented Generation (RAG)**
 
 The system uses:
 
-SentenceTransformer embeddings
+   SentenceTransformer embeddings
 
-FAISS vector similarity search
+   FAISS vector similarity search
 
-Context-aware LLM reasoning
+   Context-aware LLM reasoning
 
 This architecture ensures AI responses are grounded in the discharge summaries, reducing hallucination and improving reliability.
 
-3️⃣ Multi-Patient Clinical Comparison
+**3️⃣ Multi-Patient Clinical Comparison**
 
-Users can select multiple patients and compare:
+   Users can select multiple patients and compare:
 
-Length of stay
+   Length of stay
 
-Primary diagnosis
+   Primary diagnosis
 
-Medication changes
+   Medication changes
 
-Risk indicators
+   Risk indicators
 
-Discharge instructions
+   Discharge instructions
 
 The system generates insights that can support discharge process optimisation and clinical risk analysis.
 
-📊 Clinical Comparison Dashboard
+**📊 Clinical Comparison Dashboard**
 
 The system automatically generates a clinical comparison dashboard showing:
 
-Patient name
+  Patient name
 
-Age
+  Age
 
-Diagnosis
+  Diagnosis
 
-Length of stay
+  Length of stay
 
-Risk indicators
+  Risk indicators
 
 This provides a quick overview of discharge outcomes across multiple patients.
 
-Example dashboard view:
-
-Patient	Age	Diagnosis	Length of Stay	Risk Flags
-Patient A	57	Pneumonia	5 days	AKI risk
-Patient B	62	Sepsis	7 days	ICU admission
-💬 AI Clinical Assistant
+**
+💬 AI Clinical Assistant**
 
 Users can ask clinical questions such as:
 
-Which patient has the highest discharge risk?
+ Which patient has the highest discharge risk?
 
-Compare diagnoses between selected patients
+ Compare diagnoses between selected patients
 
-Identify potential discharge complications
+ Identify potential discharge complications
 
-Summarize medication changes
+ Summarize medication changes
 
-The AI assistant answers using only the uploaded discharge summaries.
+ The AI assistant answers using only the uploaded discharge summaries.
 
-🖥 User Interface
+**🖥 User Interface**
 
 The project includes an interactive Gradio interface featuring:
 
-Multi-patient document upload
+ Multi-patient document upload
 
-Patient selection
+ Patient selection
 
-Clinical comparison dashboard
+ Clinical comparison dashboard
 
-AI-powered chat assistant
+ AI-powered chat assistant
 
-Structured clinical data extraction
+ Structured clinical data extraction
 
-🛠 Technology Stack
-Component	Technology
-Language	Python
-Development	Google Colab
-LLM	Groq (openai/gpt-oss-120b)
-Embeddings	SentenceTransformers
-Vector Database	FAISS
-UI	Gradio
-PDF Processing	PyPDF
-📂 Running the Project
-Run via Hugging Face
+**🛠 Technology Stack**
 
-The easiest way to run the application:
+ Component	Technology
+ Language	Python
+ Development	Google Colab
+ LLM	Groq (openai/gpt-oss-120b)
+ Embeddings	SentenceTransformers
+ Vector Database	FAISS
+ UI	Gradio
+ PDF Processing	PyPDF
+ Running the Project
+ Run via Hugging Face
+
+**The easiest way to run the application:**
 
 👉 https://huggingface.co/spaces/akshayyelne/discharge-intelligence-assistant
 
-Run Locally
 
-Clone the repository:
+**📊 Future Enhancements**
 
-git clone https://github.com/akshayyelne/discharge-intelligence-assistant.git
-cd discharge-intelligence-assistant
+  Potential improvements include:
 
-Install dependencies:
+  Automated discharge KPI scoring
 
-pip install -r requirements.txt
+  Predictive readmission risk models
 
-Run the application:
+  Visualization dashboards
 
-python app.py
-📊 Future Enhancements
+  EMR system integration
 
-Potential improvements include:
+  Real-time discharge monitoring
 
-Automated discharge KPI scoring
+  Clinical cohort analysis
 
-Predictive readmission risk models
-
-Visualization dashboards
-
-EMR system integration
-
-Real-time discharge monitoring
-
-Clinical cohort analysis
-
-📄 Documentation
+**📄 Documentation**
 
 Detailed implementation documentation is available here:
 
 docs/Patient_Discharge_Intelligence_Assistant_Project_Documentation.pdf
+
 🎯 Use Case
 
 This project demonstrates how hybrid LLM + RAG architectures can convert unstructured clinical documents into actionable insights that support:
 
-Hospital discharge optimisation
+  Hospital discharge optimisation
 
-Clinical decision support
+  Clinical decision support
 
-Risk identification
+  Risk identification
 
-Operational healthcare analytics
+  Operational healthcare analytics
 
 👨‍💻 Author
 
-AI Portfolio Project exploring:
+  AI Portfolio Project exploring:
 
-Healthcare AI
+  Healthcare AI
 
-Retrieval-Augmented Generation
+  Retrieval-Augmented Generation
 
-Clinical document intelligence
+  Clinical document intelligence
 
-LLM-powered healthcare analytics
+  LLM-powered healthcare analytics
 
 ⭐ If you find this project interesting, consider giving the repository a star.

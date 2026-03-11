@@ -1,4 +1,5 @@
 import os
+import json
 import gradio as gr
 import numpy as np
 import faiss
@@ -43,6 +44,7 @@ def extract_text(file):
 
     for page in reader.pages:
         page_text = page.extract_text()
+
         if page_text:
             text += page_text + "\n"
 
@@ -64,6 +66,54 @@ def chunk_text(text, chunk_size=800, overlap=150):
 
 
 # ==========================
+# Generate Structured Summary
+# ==========================
+
+def generate_structured_summary(patient_id):
+
+    document_text = all_documents[patient_id]
+
+    prompt = f"""
+You are a clinical discharge extraction assistant.
+
+Extract structured clinical information from the discharge summary.
+
+Return JSON with EXACT structure:
+
+{{
+ "patient_demographics": {{
+    "patient_name": "",
+    "age": "",
+    "gender": "",
+    "length_of_stay": ""
+ }},
+ "primary_diagnosis": "",
+ "secondary_diagnoses": [],
+ "risk_flags": []
+}}
+
+Rules:
+- Use ONLY this schema
+- Do not invent new keys
+- If information is missing return ""
+
+Discharge Summary:
+{document_text}
+"""
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {"role": "system", "content": "You extract structured clinical data."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0
+    )
+
+    return response.choices[0].message.content
+
+
+# ==========================
 # Process Uploaded Files
 # ==========================
 
@@ -74,10 +124,15 @@ def process_files(files):
     global chunk_metadata
     global all_embeddings
     global index
+    global patient_summaries
+
+    if not files:
+        return []
 
     all_documents = {}
     all_chunks = []
     chunk_metadata = []
+    patient_summaries = {}
 
     for file in files:
 
@@ -90,89 +145,23 @@ def process_files(files):
         patient_chunks = chunk_text(document_text)
 
         for chunk in patient_chunks:
-
             all_chunks.append(chunk)
+            chunk_metadata.append({"patient_id": patient_id})
 
-            chunk_metadata.append({
-                "patient_id": patient_id
-            })
-
-    # Generate embeddings
     embeddings = embedding_model.encode(all_chunks)
+
     all_embeddings = np.array(embeddings).astype("float32")
 
-    # Build FAISS index
     dimension = all_embeddings.shape[1]
 
     index = faiss.IndexFlatL2(dimension)
     index.add(all_embeddings)
 
+    # Generate summaries
+    for patient_id in all_documents.keys():
+        patient_summaries[patient_id] = generate_structured_summary(patient_id)
+
     return list(all_documents.keys())
-
-
-# ==========================
-# Patient Retrieval
-# ==========================
-
-def retrieve_patient_context(query, selected_patient, k=5):
-
-    query_embedding = embedding_model.encode([query]).astype("float32")
-
-    patient_indices = [
-        i for i, meta in enumerate(chunk_metadata)
-        if meta["patient_id"] == selected_patient
-    ]
-
-    if not patient_indices:
-        return []
-
-    patient_embeddings = all_embeddings[patient_indices]
-
-    temp_index = faiss.IndexFlatL2(all_embeddings.shape[1])
-    temp_index.add(patient_embeddings)
-
-    distances, indices = temp_index.search(
-        query_embedding,
-        min(k, len(patient_indices))
-    )
-
-    retrieved_chunks = []
-
-    for idx in indices[0]:
-        retrieved_chunks.append(all_chunks[patient_indices[idx]])
-
-    return retrieved_chunks
-
-
-# ==========================
-# Generate Structured Summary
-# ==========================
-
-def generate_structured_summary(patient_id):
-
-    document_text = all_documents[patient_id]
-
-    prompt = f"""
-You are a clinical discharge extraction assistant.
-
-Extract structured clinical information from the content below.
-
-Return STRICT JSON.
-
-Content:
-{document_text}
-"""
-
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=[
-            {"role": "system", "content": "Return valid JSON only."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0
-    )
-
-    return response.choices[0].message.content
 
 
 # ==========================
@@ -181,8 +170,15 @@ Content:
 
 def chat_with_memory(message, history, selected_patients):
 
+    if history is None:
+        history = []
+
+    if not all_documents:
+        history.append({"role": "assistant", "content": "⚠ Please upload discharge PDFs first."})
+        return "", history
+
     if not selected_patients:
-        history.append((message, "⚠ Please select at least one patient."))
+        history.append({"role": "assistant", "content": "⚠ Please select at least one patient."})
         return "", history
 
     if isinstance(selected_patients, str):
@@ -192,45 +188,97 @@ def chat_with_memory(message, history, selected_patients):
 
     for patient in selected_patients:
 
-        if patient not in patient_summaries:
-            patient_summaries[patient] = generate_structured_summary(patient)
-
         combined_summary += f"\n\n=== Patient: {patient} ===\n"
-        combined_summary += str(patient_summaries[patient])
+        combined_summary += str(patient_summaries.get(patient, ""))
 
-    # Convert Gradio history → Groq message format
-    messages = [
-        {"role": "system", "content": "You are a clinical reasoning assistant."}
-    ]
+    prompt = f"""
+You are a clinical reasoning assistant.
 
-    for user_msg, bot_msg in history:
-        messages.append({"role": "user", "content": user_msg})
-        messages.append({"role": "assistant", "content": bot_msg})
-
-    # Add the new user message
-    messages.append({
-        "role": "user",
-        "content": f"""
-Use ONLY the patient data below.
+Use ONLY the patient discharge summaries below.
 
 {combined_summary}
+
+Answer the following question clearly.
 
 Question:
 {message}
 """
-    })
 
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=messages,
-        temperature=0.2
-    )
+    try:
 
-    answer = response.choices[0].message.content
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[
+                {"role": "system", "content": "You are a clinical reasoning assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2
+        )
 
-    history.append((message, answer))
+        answer = response.choices[0].message.content
+
+    except Exception as e:
+
+        answer = f"⚠ Model Error: {str(e)}"
+
+    history.append({"role": "user", "content": message})
+    history.append({"role": "assistant", "content": answer})
 
     return "", history
+
+
+# ==========================
+# Dashboard Generator
+# ==========================
+
+def generate_dashboard(selected_patients):
+
+    if not selected_patients:
+        return "## 🧠 Clinical Comparison Dashboard\nSelect patients to view insights."
+
+    if isinstance(selected_patients, str):
+        selected_patients = [selected_patients]
+
+    table = "| Patient File | Name | Age | Diagnosis | Length of Stay | Risk Flags |\n"
+    table += "|--------------|------|-----|-----------|---------------|-----------|\n"
+
+    for patient in selected_patients:
+
+        summary_json = patient_summaries.get(patient, "{}")
+
+        try:
+
+            data = json.loads(summary_json)
+
+            demographics = data.get("patient_demographics", {})
+
+            name = (
+                demographics.get("patient_name")
+                or demographics.get("name")
+                or demographics.get("patient")
+                or "N/A"
+            )
+
+            age = demographics.get("age", "N/A")
+            diagnosis = data.get("primary_diagnosis", "N/A")
+            los = demographics.get("length_of_stay", "N/A")
+
+            risk_flags = data.get("risk_flags", [])
+
+            if isinstance(risk_flags, list):
+                risk_flags = ", ".join(risk_flags)
+
+        except Exception:
+
+            name = "N/A"
+            age = "N/A"
+            diagnosis = "N/A"
+            los = "N/A"
+            risk_flags = "N/A"
+
+        table += f"| {patient} | {name} | {age} | {diagnosis} | {los} | {risk_flags} |\n"
+
+    return "## 🧠 Clinical Comparison Dashboard\n\n" + table
 
 
 # ==========================
@@ -241,21 +289,34 @@ with gr.Blocks() as demo:
 
     gr.Markdown("# 🏥 Patient Discharge Intelligence Assistant")
 
-    file_upload = gr.File(
-        label="Upload Discharge PDFs",
-        file_types=[".pdf"],
-        file_count="multiple"
+    gr.Markdown("Upload discharge summaries and analyse patient discharge outcomes.")
+
+    with gr.Row():
+
+        file_upload = gr.File(
+            label="Upload Discharge PDFs",
+            file_types=[".pdf"],
+            file_count="multiple"
+        )
+
+        patient_dropdown = gr.Dropdown(
+            choices=[],
+            label="Select Patient(s)",
+            multiselect=True
+        )
+
+    dashboard = gr.Markdown(
+        "## 🧠 Clinical Comparison Dashboard\nSelect patients to view insights."
     )
 
-    patient_dropdown = gr.Dropdown(
-        choices=[],
-        label="Select Patient(s)",
-        multiselect=True
+    chatbot = gr.Chatbot(height=400)
+
+    msg = gr.Textbox(
+        label="Ask a clinical question",
+        placeholder="Example: Compare readmission risks between patients."
     )
 
-    chatbot = gr.Chatbot(height=500)
-
-    msg = gr.Textbox(label="Ask a question")
+    # Upload Handler
 
     def handle_upload(files):
 
@@ -269,6 +330,16 @@ with gr.Blocks() as demo:
         outputs=patient_dropdown
     )
 
+    # Dashboard Update
+
+    patient_dropdown.change(
+        generate_dashboard,
+        inputs=patient_dropdown,
+        outputs=dashboard
+    )
+
+    # Chat Interaction
+
     msg.submit(
         chat_with_memory,
         inputs=[msg, chatbot, patient_dropdown],
@@ -276,4 +347,4 @@ with gr.Blocks() as demo:
     )
 
 
-demo.launch()
+demo.queue().launch()

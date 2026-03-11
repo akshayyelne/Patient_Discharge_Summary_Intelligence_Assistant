@@ -182,7 +182,8 @@ Content:
 def chat_with_memory(message, history, selected_patients):
 
     if not selected_patients:
-        return "⚠ Please select at least one patient."
+        history.append((message, "⚠ Please select at least one patient."))
+        return "", history
 
     if isinstance(selected_patients, str):
         selected_patients = [selected_patients]
@@ -197,9 +198,19 @@ def chat_with_memory(message, history, selected_patients):
         combined_summary += f"\n\n=== Patient: {patient} ===\n"
         combined_summary += str(patient_summaries[patient])
 
-    prompt = f"""
-You are a clinical reasoning assistant.
+    # Convert Gradio history → Groq message format
+    messages = [
+        {"role": "system", "content": "You are a clinical reasoning assistant."}
+    ]
 
+    for user_msg, bot_msg in history:
+        messages.append({"role": "user", "content": user_msg})
+        messages.append({"role": "assistant", "content": bot_msg})
+
+    # Add the new user message
+    messages.append({
+        "role": "user",
+        "content": f"""
 Use ONLY the patient data below.
 
 {combined_summary}
@@ -207,13 +218,11 @@ Use ONLY the patient data below.
 Question:
 {message}
 """
+    })
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
-        messages=[
-            {"role": "system", "content": "Answer using provided patient data only."},
-            {"role": "user", "content": prompt}
-        ],
+        messages=messages,
         temperature=0.2
     )
 

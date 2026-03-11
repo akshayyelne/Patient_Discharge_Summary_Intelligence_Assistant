@@ -1,68 +1,124 @@
-# 🏥 Patient Discharge Intelligence Assistant
-
-AI-powered system for analyzing hospital discharge summaries using a hybrid **LLM + Retrieval Augmented Generation (RAG)** architecture.
-
-This project transforms unstructured discharge documents into structured clinical insights and enables **cross-patient discharge comparison to improve hospital discharge processes**.
 
 ---
 
-# 📌 Problem Statement
+# 🧠 Core AI Components
 
-Hospitals generate large volumes of discharge documentation that is typically **unstructured and difficult to analyze systematically**.
+## 1. Structured Clinical Extraction
 
-This creates several challenges:
+Discharge summaries are converted into structured JSON containing:
 
-- Incomplete discharge instructions
-- Medication reconciliation errors
-- Limited visibility into readmission risks
-- Difficulty identifying discharge process gaps
-- No easy way to compare discharge quality across patients
+- Patient demographics
+- Primary diagnosis
+- Secondary diagnoses
+- Procedures performed
+- Medication changes
+- Risk indicators
+- Follow-up instructions
 
-These issues can lead to:
-
-- Higher readmission rates
-- Increased operational costs
-- Poor patient outcomes
-- Inefficient discharge workflows
+This step normalizes unstructured clinical documentation.
 
 ---
 
-# ⚠ Impact on Hospital Operations
+## 2. Retrieval Augmented Generation (RAG)
 
-Without structured discharge intelligence:
+The system uses:
 
-- Risk factors remain hidden inside unstructured documents
-- Process inefficiencies are discovered reactively
-- Cross-patient discharge comparisons are difficult
-- Clinical teams lack operational insights
+- SentenceTransformer embeddings
+- FAISS vector search
+- Context-aware LLM reasoning
 
-This creates both **clinical risk and operational inefficiency**.
-
----
-
-# 💡 Proposed Solution
-
-This project implements a **Hybrid AI Discharge Intelligence System** that combines:
-
-- Structured clinical extraction
-- Retrieval Augmented Generation (RAG)
-- Multi-patient comparison
-- AI-driven operational insights
-
-The system converts discharge summaries into structured data and allows clinicians or analysts to explore insights through an interactive interface.
+This enables accurate question answering grounded in discharge content.
 
 ---
 
-# 🚀 Key Capabilities
+## 3. Multi-Patient Comparison Mode
 
-- Patient-level clinical reasoning  
-- Cross-patient discharge comparison  
-- Risk factor analysis  
-- Identification of discharge process gaps  
-- Operational improvement recommendations  
+Users can select multiple patients and compare:
+
+- Length of stay
+- Diagnoses
+- Medication changes
+- Risk indicators
+- Discharge instructions
+
+The system generates insights to support **discharge process optimization**.
 
 ---
 
-# 🏗 System Architecture
+# 🖥 User Interface
 
-The system follows a hybrid **Extraction + RAG architecture**:
+The project includes a **Gradio-based interactive interface** featuring:
+
+- Multi-patient selector
+- AI-powered chat interface
+- Comparison mode
+- Embedded project documentation
+
+---
+
+# 🛠 Technology Stack
+
+- Python
+- Google Colab
+- Groq LLM (`openai/gpt-oss-120b`)
+- SentenceTransformers
+- FAISS
+- Gradio
+- PyPDF
+
+---
+
+# 📂 Running this Project
+
+## 1. Clone the Repository
+git clone https://github.com/YOUR_USERNAME/patient-discharge-intelligence-assistant.git
+
+## 2. Install Dependencies
+
+pip install -r requirements.txt
+
+## 3. Run the Notebook
+
+Open the notebook in:
+
+- Google Colab
+- Jupyter Notebook
+
+Upload discharge summary PDFs and run the cells.
+
+---
+
+# 📊 Future Enhancements
+
+Potential improvements include:
+
+- Automated discharge KPI scoring
+- Risk scoring models
+- Visualization dashboards
+- EMR system integration
+- Real-time discharge monitoring
+
+---
+
+# 📄 Documentation
+
+Detailed implementation documentation is available here:
+docs/Patient_Discharge_Intelligence_Assistant_Project_Documentation.pdf
+
+
+---
+
+# 🎯 Use Case
+
+This project demonstrates how hybrid **LLM + RAG architectures** can convert unstructured clinical documents into actionable insights that support hospital discharge optimization.
+
+---
+
+# 👨‍💻 Author
+
+AI Portfolio Project exploring:
+
+- Healthcare AI
+- Retrieval Augmented Generation
+- Clinical document intelligence
+
